@@ -1,0 +1,18 @@
+{
+  "name": "rss",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard"
+  },
+  "author": "Rich Trott <rtrott@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.1",
+    "xmldom": "^0.6.0"
+  },
+  "devDependencies": {
+    "standard": "^16.0.3"
+  }
+}
