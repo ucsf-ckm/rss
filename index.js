@@ -1,7 +1,21 @@
 'use strict'
 
-// TODO: accept URL as a parameter so we can add things in
-const urlBase = 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=27094'
+const feeds = [
+  { label: 'NEWS: Latest Library News (all)', url: 'https://www.library.ucsf.edu/feed', limit: 5 },
+  { label: 'EVENTS: Upcoming Events from the Library', url: 'https://calendars.library.ucsf.edu/rss.php?m=month&iid=138&cid=928', limit: 15 },
+  { label: 'NEWS: Latest news about Makers Lab', url: 'https://www.library.ucsf.edu/topic/makers-lab/feed', limit: 5 },
+  { label: 'EVENTS: Makers Lab', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=25201', limit: 15 },
+  { label: 'NEWS: Latest news about learning technology', url: 'https://www.library.ucsf.edu/topic/ed-tech/feed', limit: 5 },
+  { label: 'EVENTS: Learning Technology', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=958', limit: 15 },
+  { label: 'NEWS: Latest news about archives and special Collections', url: 'https://www.library.ucsf.edu/topic/archives-special-collections/feed/', limit: 5 },
+  { label: 'EVENTS: Archives and Special Collections', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=6331', limit: 15 },
+  { label: 'NEWS: Latest news about literature and research', url: 'https://www.library.ucsf.edu/topic/education-research/feed', limit: 5 },
+  { label: 'EVENTS: Education and Research', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=37580', limit: 15 },
+  { label: 'NEWS: Latest news about data science', url: 'https://www.library.ucsf.edu/topic/data-science-initiative/feed', limit: 5 },
+  { label: 'EVENTS: Data Science', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=27094', limit: 15 },
+  { label: 'NEWS: Latest news about scholarly communication', url: 'https://www.library.ucsf.edu/topic/scholarly-communication/feed', limit: 5 },
+  { label: 'EVENTS: Upcoming Events from the ZSFG', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=29165', limit: 15 }
+]
 
 const fetch = require('node-fetch')
 const xmldom = require('xmldom')
@@ -30,17 +44,27 @@ async function main (url) {
 }
 
 // TODO: assert that json.channel.children exists and is an array.
-// TODO: assert that link and libcal:date exist
+// TODO: assert that link exists and is a string.
 // TODO: catch errors
 
-main(urlBase)
-  .then(json => json.channel.children)
-  .then(data => data.filter(el => el.title))
-  .then(data => data.slice(0, 3)) // Limit to first 3 items
-  .then(data => data.map(el => {
-    const [year, monthNum, dayNum] = el['libcal:date'].content.split('-')
-    const month = new Date(year, monthNum - 1, dayNum).toLocaleString('en-US', { month: 'long' })
-    return `${month} ${dayNum}<br><a href="${el.link.content}">${el.title.content}</a><br><br>`
-  }))
-  .then(html => html.join('\n'))
-  .then(foo => console.log(foo))
+(async () => {
+  for (const feed of feeds) {
+    const json = await main(feed.url)
+    const children = json.channel.children
+    const data = children.filter(el => el.title)
+    const items = data.slice(0, feed.limit)
+    const html = items.map(el => {
+      if (el['libcal:date']) {
+        // Handle event listing.
+        const [year, monthNum, dayNum] = el['libcal:date'].content.split('-')
+        const month = new Date(year, monthNum - 1, dayNum).toLocaleString('en-US', { month: 'long' })
+        return `${month} ${dayNum}<br><a href="${el.link.content}">${el.title.content}</a><br><br>`
+      } else {
+        // Handle news item.
+        return `<a href="${el.link.content}">${el.title.content}</a><br><br>`
+      }
+    })
+    console.log(`<hr>${feed.label}<br><br>`)
+    console.log(html.join('\n'))
+  }
+})()
