@@ -51,7 +51,7 @@ async function main (url) {
   for (const feed of feeds) {
     const json = await main(feed.url)
     const children = json.channel.children
-    const data = children.filter(el => el.title)
+    const data = children.filter(el => el.title && !el.height)
     const items = data.slice(0, feed.limit)
     const html = items.map(el => {
       if (el['libcal:date']) {
