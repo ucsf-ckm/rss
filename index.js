@@ -43,6 +43,9 @@ async function main (url) {
   return xml2json(xml)
 }
 
+console.log('<!doctype html>\n<title>Newsletter contents</title>')
+console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.yml"><img src="https://github.com/ucsf-ckm/rss/actions/workflows/update.yml/badge.svg"></a>');
+
 // TODO: assert that json.channel.children exists and is an array.
 // TODO: assert that link exists and is a string.
 // TODO: catch errors
