@@ -5,8 +5,9 @@ name: Update from RSS feeds
 
 on:
   schedule:
-    # Run every day at 3:04 AM.
-    - cron: '4 3 * * *'
+    # Run every day at UTC 8:04 AM which will be early AM Pacific Time.
+    # This time is chosen so that the previous day's events are removed.
+    - cron: '4 8 * * *'
 
   workflow_dispatch:
 
