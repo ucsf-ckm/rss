@@ -1,7 +1,7 @@
 'use strict'
 
 const feeds = [
-  { label: 'NEWS: Latest Library News (all)', url: 'https://www.library.ucsf.edu/feed', limit: 5 },
+  { label: 'NEWS: Latest Library News (all)', url: 'https://www.library.ucsf.edu/feed', limit: 10 },
   { label: 'EVENTS: Upcoming Events from the Library', url: 'https://calendars.library.ucsf.edu/rss.php?m=month&iid=138&cid=928', limit: 15 },
   { label: 'NEWS: Latest news about Makers Lab', url: 'https://www.library.ucsf.edu/topic/makers-lab/feed', limit: 5 },
   { label: 'EVENTS: Makers Lab', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=25201', limit: 15 },
