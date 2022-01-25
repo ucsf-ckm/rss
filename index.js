@@ -73,6 +73,7 @@ console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.y
     console.log(`<hr>${feed.label}<br><br>`)
     if (json.channel) {
       const children = json.channel.children
+      // TODO: This can throw. Better error handling or checking needed.
       const data = children.filter(el => el.title && !el.height)
       const items = data.slice(0, feed.limit)
       const html = items.map(el => {
@@ -89,6 +90,7 @@ console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.y
       console.log(html.join('\n'))
     } else if (json.events) {
       const events = json.events
+      // TODO: This can throw. Better error handling or checking needed.
       const html = events.map(el => {
         // TODO: move this to a helper function, it's same as above
         const [year, monthNum, dayNum] = el.start.split(/[^\d]/)
