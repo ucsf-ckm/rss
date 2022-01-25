@@ -9,10 +9,10 @@
   "author": "Rich Trott <rtrott@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "xmldom": "^0.6.0"
   },
   "devDependencies": {
-    "standard": "^16.0.3"
+    "standard": "^16.0.4"
   }
 }
