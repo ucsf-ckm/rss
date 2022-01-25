@@ -1,4 +1,5 @@
-'use strict'
+import fetch from 'node-fetch'
+import xmldom from 'xmldom'
 
 const feeds = [
   { label: 'NEWS: Latest Library News (all)', url: 'https://www.library.ucsf.edu/feed', limit: 10 },
@@ -16,9 +17,6 @@ const feeds = [
   { label: 'NEWS: Latest news about scholarly communication', url: 'https://www.library.ucsf.edu/topic/scholarly-communication/feed', limit: 5 },
   { label: 'EVENTS: Upcoming Events from the ZSFG', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=29165', limit: 15 }
 ]
-
-const fetch = require('node-fetch')
-const xmldom = require('xmldom')
 
 async function main (url, token) {
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
