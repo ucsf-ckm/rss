@@ -87,7 +87,7 @@ console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.y
         }
       })
       console.log(html.join('\n'))
-    } else {
+    } else if (json.events) {
       const events = json.events
       const html = events.map(el => {
         // TODO: move this to a helper function, it's same as above
@@ -96,6 +96,9 @@ console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.y
         return `${month} ${dayNum}<br><a href="${el.url.public}">${el.title}</a><br><br>`
       })
       console.log(html.join('\n'))
+    } else {
+      const errorMsg = json.error_description || 'Unknown error'
+      throw new Error(errorMsg)
     }
   }
 })()
