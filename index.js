@@ -12,7 +12,7 @@ const feeds = [
   { label: 'NEWS: Latest news about literature and research', url: 'https://www.library.ucsf.edu/topic/education-research/feed', limit: 5 },
   { label: 'EVENTS: Education and Research', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=37580', limit: 15 },
   { label: 'NEWS: Latest news about data science', url: 'https://www.library.ucsf.edu/topic/data-science-initiative/feed', limit: 5 },
-  { label: 'EVENTS: Data Science', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=27094', limit: 15 },
+  { label: 'EVENTS: Data Science', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=27094', limit: 25 },
   { label: 'NEWS: Latest news about scholarly communication', url: 'https://www.library.ucsf.edu/topic/scholarly-communication/feed', limit: 5 },
   { label: 'EVENTS: Upcoming Events from the ZSFG', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=29165', limit: 15 }
 ]
