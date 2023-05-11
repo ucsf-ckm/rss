@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import xmldom from 'xmldom'
+import xmldom from '@xmldom/xmldom'
 
 const feeds = [
   { label: 'NEWS: Latest Library News (all)', url: 'https://www.library.ucsf.edu/feed', limit: 10 },
