@@ -1,9 +1,13 @@
+import fs from 'node:fs/promises'
 import fetch from 'node-fetch'
 import xmldom from '@xmldom/xmldom'
 
+await fs.unlink('docs/sample.html')
+await fs.unlink('docs/events.json')
+
 const feeds = [
   { label: 'NEWS: Latest Library News (all)', url: 'https://www.library.ucsf.edu/feed', limit: 10 },
-  { label: 'EVENTS: Upcoming Events from the Library', url: 'https://calendars.library.ucsf.edu/1.1/events?cal_id=928&days=365&limit=500', limit: 500 },
+  { label: 'EVENTS: Upcoming Events from the Library', url: 'https://calendars.library.ucsf.edu/1.1/events?cal_id=928&days=365&limit=500', limit: 500, json: true },
   { label: 'NEWS: Latest news about Makers Lab', url: 'https://www.library.ucsf.edu/topic/makers-lab/feed', limit: 5 },
   { label: 'EVENTS: Makers Lab', url: 'https://calendars.library.ucsf.edu/rss.php?m=cat&iid=138&cid=928&cat=25201', limit: 15 },
   { label: 'NEWS: Latest news about learning technology', url: 'https://www.library.ucsf.edu/topic/ed-tech/feed', limit: 5 },
@@ -46,8 +50,16 @@ async function main (url, token) {
   }
 }
 
-console.log('<!doctype html>\n<title>Newsletter contents</title>')
-console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.yml"><img alt="Update job status" src="https://github.com/ucsf-ckm/rss/actions/workflows/update.yml/badge.svg"></a>');
+await fs.writeFile(
+  'doc/sample.html',
+  '<!doctype html>\n<title>Newsletter contents</title>',
+  { flag: 'a' }
+)
+await fs.writeFile(
+  'doc/sample.html',
+  '<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.yml"><img alt="Update job status" src="https://github.com/ucsf-ckm/rss/actions/workflows/update.yml/badge.svg"></a>',
+  { flag: 'a' }
+);
 
 // TODO: assert that json.channel.children exists and is an array for RSS, same for json.events for API
 // TODO: assert that link exists and is a string.
@@ -68,7 +80,7 @@ console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.y
 
   for (const feed of feeds) {
     const json = await main(feed.url, token)
-    console.log(`<hr>${feed.label}<br><br>`)
+    await fs.writeFile('doc/sample.html', `<hr>${feed.label}<br><br>`, { flag: 'a' })
     if (json.channel) {
       const children = json.channel.children
       // TODO: This can throw. Better error handling or checking needed.
@@ -85,7 +97,7 @@ console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.y
           return `<a href="${el.link.content}">${el.title.content}</a><br><br>`
         }
       })
-      console.log(html.join('\n'))
+      await fs.writeFile('doc/sample.html', html.join('\n'), { flag: 'a' })
     } else if (json.events) {
       const events = json.events
       // TODO: This can throw. Better error handling or checking needed.
@@ -95,7 +107,10 @@ console.log('<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.y
         const month = new Date(year, monthNum - 1, dayNum).toLocaleString('en-US', { month: 'long' })
         return `${month} ${dayNum}<br><a href="${el.url.public}">${el.title}</a><br><br>`
       })
-      console.log(html.join('\n'))
+      await fs.writeFile('doc/sample.html', html.join('\n'), { flag: 'a' })
+      if (feed.json) {
+        await fs.writeFile('doc/events.json', JSON.stringify(events), { flag: 'a' })
+      }
     } else {
       const errorMsg = json.error_description || 'Unknown error'
       throw new Error(errorMsg)
