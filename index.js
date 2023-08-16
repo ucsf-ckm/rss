@@ -109,7 +109,12 @@ await fs.writeFile(
       })
       await fs.writeFile('docs/sample.html', html.join('\n'), { flag: 'a' })
       if (feed.json) {
-        await fs.writeFile('docs/events.json', JSON.stringify(events), { flag: 'a' })
+        const rss = events.map((el) => {
+          el.location = el.location.name
+          el.campus = el.campus.name
+          return el
+        })
+        await fs.writeFile('docs/events.json', JSON.stringify(rss), { flag: 'a' })
       }
     } else {
       const errorMsg = json.error_description || 'Unknown error'
