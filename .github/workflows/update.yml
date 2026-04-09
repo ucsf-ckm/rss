@@ -1,5 +1,4 @@
-# This workflow update the sample.html file as that's what we use to prepare
-# newsletters.
+# This workflow update the events.json file for use by digital signage.
 
 name: Update from RSS feeds
 

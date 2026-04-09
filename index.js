@@ -2,7 +2,6 @@ import fs from 'node:fs/promises'
 import fetch from 'node-fetch'
 import xmldom from '@xmldom/xmldom'
 
-await fs.unlink('docs/sample.html')
 await fs.unlink('docs/events.json')
 
 const feeds = [
@@ -25,7 +24,7 @@ const feeds = [
 async function main (url, token) {
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
 
-  const contentType = await res.headers.get('content-type')
+  const contentType = res.headers.get('content-type')
 
   if (contentType.includes('rss+xml')) {
     const body = await res.text()
@@ -50,17 +49,6 @@ async function main (url, token) {
   }
 }
 
-await fs.writeFile(
-  'docs/sample.html',
-  '<!doctype html>\n<title>Newsletter contents</title>\n',
-  { flag: 'a' }
-)
-await fs.writeFile(
-  'docs/sample.html',
-  '<a href="https://github.com/ucsf-ckm/rss/actions/workflows/update.yml"><img alt="Update job status" src="https://github.com/ucsf-ckm/rss/actions/workflows/update.yml/badge.svg"></a>\n',
-  { flag: 'a' }
-);
-
 // TODO: assert that json.channel.children exists and is an array for RSS, same for json.events for API
 // TODO: assert that link exists and is a string.
 // TODO: catch errors
@@ -80,34 +68,9 @@ await fs.writeFile(
 
   for (const feed of feeds) {
     const json = await main(feed.url, token)
-    await fs.writeFile('docs/sample.html', `<hr>${feed.label}<br><br>\n`, { flag: 'a' })
-    if (json.channel) {
-      const children = json.channel.children
-      // TODO: This can throw. Better error handling or checking needed.
-      const data = children.filter(el => el.title && !el.height)
-      const items = data.slice(0, feed.limit)
-      const html = items.map(el => {
-        if (el['libcal:date']) {
-          // Handle event listing.
-          const [year, monthNum, dayNum] = el['libcal:date'].content.split('-')
-          const month = new Date(year, monthNum - 1, dayNum).toLocaleString('en-US', { month: 'long' })
-          return `${month} ${dayNum}<br><a href="${el.link.content}">${el.title.content}</a><br><br>`
-        } else {
-          // Handle news item.
-          return `<a href="${el.link.content}">${el.title.content}</a><br><br>`
-        }
-      })
-      await fs.writeFile('docs/sample.html', html.join('\n'), { flag: 'a' })
-    } else if (json.events) {
+    if (json.events) {
       const events = json.events
       // TODO: This can throw. Better error handling or checking needed.
-      const html = events.map(el => {
-        // TODO: move this to a helper function, it's same as above
-        const [year, monthNum, dayNum] = el.start.split(/[^\d]/)
-        const month = new Date(year, monthNum - 1, dayNum).toLocaleString('en-US', { month: 'long' })
-        return `${month} ${dayNum}<br><a href="${el.url.public}">${el.title}</a><br><br>`
-      })
-      await fs.writeFile('docs/sample.html', html.join('\n'), { flag: 'a' })
       if (feed.json) {
         const rss = events.map((el) => {
           el.location = el.location.name
@@ -116,9 +79,6 @@ await fs.writeFile(
         })
         await fs.writeFile('docs/events.json', JSON.stringify(rss), { flag: 'a' })
       }
-    } else {
-      const errorMsg = json.error_description || 'Unknown error'
-      throw new Error(errorMsg)
     }
   }
 })()
