@@ -1,6 +1,8 @@
 # This workflow update the events.json file for use by digital signage.
 
 name: Update from RSS feeds
+permissions:
+  contents: write
 
 on:
   schedule:
